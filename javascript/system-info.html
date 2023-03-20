@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+        <script>
+        $.getJSON("https://api.ipify.org?format=json", function(data) {
+        $('#ip').html(data.ip);
+    });
+        </script>
+        <style>
+            .top{
+            float: left;
+            margin-bottom: 40px;
+            }
+
+            .container {
+            width: 620px;
+            max-width: 80vw;
+            }
+            
+            button {
+            height: 30px;
+            width: 100px;
+            max-height: 10vh;
+            max-width: 10vw;
+            background-color: greenyellow;
+            border: none;
+            float: right;
+            cursor: pointer;
+            }
+            
+            textarea {
+            height: 50px;
+            width: 500px;
+            max-height: 10vh;
+            max-width: 60vw;
+            background-color: lightseagreen;
+            resize: none;
+            border: none;
+            }
+
+            .dark-mode {
+          background-color: rgb(70, 70, 70);
+          color: white;
+            }
+
+        </style>
+    </head>
+    <body>
+      <div class="top">
+        <button style="height:50px" onclick="darkmode()">Toggle dark mode</button>
+        <button style="height:50px; margin-right:20px" onclick = "disablerightclick()">Disable right click</button>
+    </div>
+<div class="container">
+<textarea id="os" readonly></textarea><button onclick="copyos()">Copy</button><br>
+<textarea id="cpu" readonly></textarea><button onclick="copycpu()">Copy</button><br>
+<textarea id="ram" readonly></textarea><button onclick="copyram()">Copy</button><br>
+<textarea id="screen" readonly></textarea><button onclick="copyscreen()">Copy</button><br>
+<textarea id="cookie" readonly></textarea><button onclick="copycookie()">Copy</button><br>
+<textarea id="touch" readonly></textarea><button onclick="copytouch()">Copy</button><br>
+<textarea id="language" readonly></textarea><button onclick="copylanguage()">Copy</button><br>
+<textarea id="charge" readonly>Charging state unknown</textarea><button onclick="copycharge()">Copy</button><br>
+<textarea id="level" readonly>Battery level unknown</textarea><button onclick="copylevel()">Copy</button><br>
+<textarea id="chargetime" readonly>Charging time unknown</textarea><button onclick="copychargetime()">Copy</button><br>
+<textarea id="dischargetime" readonly>Discharging time unknown</textarea><button onclick="copydischargetime()">Copy</button><br>
+<textarea id="ip" readonly></textarea><button onclick="copyip()">Copy</button><br>
+<button style="height:70px" onclick="generatepdf()">Save as PDF (jsPDF)</button>
+</div>
+    </body>
+
+<script>
+
+var screenSize = '';
+        if (screen.width) {
+            width = (screen.width) ? screen.width : '';
+            height = (screen.height) ? screen.height : '';
+            screenSize += width + " x " + height;
+        }
+
+        window.a = {
+        screensize:screenSize
+    };
+
+os =(document.querySelector('#os').textContent = ['Operating system: '+navigator.platform]);
+cpu =(document.querySelector('#cpu').textContent = ['Number of CPU threads: '+navigator.hardwareConcurrency]);
+ram =(document.querySelector('#ram').textContent = ['Ram (GB): '+navigator.deviceMemory]);
+screen =(document.querySelector('#screen').textContent = ['Screen resolution: '+a.screensize]);
+cookie =(document.querySelector('#cookie').textContent = [navigator.cookieEnabled ? 'Cookies: Enabled' : 'Cookies: Disabled']);
+touch =(document.querySelector('#touch').textContent = ['Max touch screen points: '+navigator.maxTouchPoints]);
+language =(document.querySelector('#language').textContent = ['Language: '+navigator.language || navigator.userLanguage]);
+
+
+    window.onload = function () {
+      function update(battery) {
+charge= (document.querySelector('#charge').textContent = [battery.charging ? 'Battery is charging' : 'Battery is not charging']);
+level= (document.querySelector('#level').textContent = ['Battery level: '+battery.level*100+'%']);
+chargetime= (document.querySelector('#chargetime').textContent = ['Battery charging time (minutes): '+battery.chargingTime/60]);
+dischargetime= (document.querySelector('#dischargetime').textContent = ['Battery discharging time (minutes): '+battery.dischargingTime/60]);
+      }
+
+      navigator.getBattery().then(function(battery) {
+        update(battery);
+
+        battery.onchargingchange = function () {
+        update(battery);
+        };
+
+        battery.onlevelchange = function () {
+        update(battery);
+        };
+
+        battery.onchargingtimechange = function () {
+        update(battery);
+        };
+        
+        battery.ondischargingtimechange = function () {
+        update(battery);
+        };
+      });
+    };
+
+  function darkmode() {
+   var element = document.body;
+   element.classList.toggle("dark-mode");
+}
+        
+  function disablerightclick() {  
+  document.addEventListener('contextmenu', event => event.preventDefault());
+}
+
+  function copyos() {
+  var copyText = document.getElementById("os");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copycpu() {
+  var copyText = document.getElementById("cpu");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copyram() {
+  var copyText = document.getElementById("ram");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copyscreen() {
+  var copyText = document.getElementById("screen");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copycookie() {
+  var copyText = document.getElementById("cookie");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copytouch() {
+  var copyText = document.getElementById("touch");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copylanguage() {
+  var copyText = document.getElementById("language");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copycharge() {
+  var copyText = document.getElementById("charge");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copylevel() {
+  var copyText = document.getElementById("level");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copychargetime() {
+  var copyText = document.getElementById("chargetime");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copydischargetime() {
+  var copyText = document.getElementById("dischargetime");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+  function copyip() {
+  var copyText = document.getElementById("ip");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+}
+
+
+             function generatepdf() {
+                 var pdf = new jsPDF({
+                     orientation: 'p',
+                     unit: 'mm',
+                     format: 'a4',
+                     putOnlyUsedFonts:true
+                     });
+                 pdf.text((os+' | '+cpu+' | '+ram+' | '+screen+' | '+cookie+' | '+touch+' | '+language+' | '+charge+' | '+level+' | '+chargetime+' | '+dischargetime), 5, 5, {maxWidth: 200});
+                 pdf.save('Specs');
+             }
+</script>
+</html>
